@@ -7,6 +7,11 @@
 #include "utility/Math.h"
 #include "rendering/imgui/ImGuiManager.h"
 
+//Project Imports
+#include <glm/gtx/euler_angles.hpp>
+//END
+
+
 PanningCamera::PanningCamera() : distance(init_distance), focus_point(init_focus_point), pitch(init_pitch), yaw(init_yaw), near(init_near), fov(init_fov) {}
 
 PanningCamera::PanningCamera(float distance, glm::vec3 focus_point, float pitch, float yaw, float near, float fov)
@@ -45,7 +50,12 @@ void PanningCamera::update(const Window& window, float dt, bool controls_enabled
     pitch = clamp(pitch, PITCH_MIN, PITCH_MAX);
     distance = clamp(distance, MIN_DISTANCE, MAX_DISTANCE);
 
-    view_matrix = glm::translate(glm::vec3{0.0f, 0.0f, -distance});
+    //Task 1 - Yusuke
+    glm::mat4 rotate = glm::eulerAngleYX(yaw, pitch);
+    glm::vec3 position = focus_point + glm::vec3(rotate * glm::vec4{0.0f, 0.0f, distance, 1.0f});
+
+    view_matrix = glm::lookAt(position, focus_point, glm::vec3(0, 1, 0));
+        // view_matrix = glm::translate(glm::vec3{0.0f, 0.0f, -distance});
     inverse_view_matrix = glm::inverse(view_matrix);
 
     projection_matrix = glm::infinitePerspective(fov, window.get_framebuffer_aspect_ratio(), 1.0f);
