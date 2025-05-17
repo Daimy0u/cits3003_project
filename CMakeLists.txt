@@ -148,12 +148,10 @@ if(WIN32)
             "${CMAKE_SOURCE_DIR}/config" "${CMAKE_BINARY_DIR}/config"
     )
 else()
-    # on *nix you can still symlink
-    add_custom_command(TARGET cits3003_project
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E create_symlink
-            "${CMAKE_SOURCE_DIR}/res" "${CMAKE_BINARY_DIR}/res"
-        COMMAND ${CMAKE_COMMAND} -E create_symlink
-            "${CMAKE_SOURCE_DIR}/config" "${CMAKE_BINARY_DIR}/config"
-    )
+    # Replace the symlink command with a file copy command
+    if(EXISTS ${CMAKE_BINARY_DIR}/res)
+        file(REMOVE_RECURSE ${CMAKE_BINARY_DIR}/res)
+    endif()
+
+    file(COPY ${CMAKE_SOURCE_DIR}/res DESTINATION ${CMAKE_BINARY_DIR})
 endif()
