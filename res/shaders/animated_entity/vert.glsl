@@ -23,6 +23,9 @@ uniform vec3 specular_tint;
 uniform vec3 ambient_tint;
 uniform float shininess;
 
+//Task E
+uniform vec2 texture_scale;
+
 // Light Data
 #if NUM_PL > 0
 layout (std140) uniform PointLightArray {
@@ -55,14 +58,14 @@ void main() {
 
     vec3 ws_position = (animation_matrix * vec4(vertex_position, 1.0f)).xyz;
     vec3 ws_normal = normalize(normal_matrix * normal);
-    vertex_out.texture_coordinate = texture_coordinate;
+    vertex_out.texture_coordinate = texture_coordinate * texture_scale;
 
     gl_Position = projection_view_matrix * vec4(ws_position, 1.0f);
 
     // Per vertex light calcs are below this point
     vec3 ws_view_dir = normalize(ws_view_position - ws_position);
     LightCalculatioData light_calculation_data = LightCalculatioData(ws_position, ws_view_dir, ws_normal);
-    Material material = Material(diffuse_tint, specular_tint, ambient_tint, shininess);
+    Material material = Material(diffuse_tint, specular_tint, ambient_tint, shininess, texture_scale);
 
     vertex_out.lighting_result = total_light_calculation(light_calculation_data, material
         #if NUM_PL > 0

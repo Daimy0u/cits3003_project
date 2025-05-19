@@ -58,7 +58,7 @@ void PanningCamera::update(const Window& window, float dt, bool controls_enabled
         // view_matrix = glm::translate(glm::vec3{0.0f, 0.0f, -distance});
     inverse_view_matrix = glm::inverse(view_matrix);
 
-    projection_matrix = glm::perspective(fov, window.get_framebuffer_aspect_ratio(), near, 1000.0f); //Task2 
+    projection_matrix = glm::perspective(fov, window.get_framebuffer_aspect_ratio(), near, 1000.0f); //Task C 
     inverse_projection_matrix = glm::inverse(projection_matrix);
 }
 

@@ -118,6 +118,11 @@ void EditorScene::LitMaterialComponent::add_material_imgui_edit_section(MasterRe
     ImGui::Text("Material");
 
     // Add UI controls here
+    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.45f);
+    material_changed |= ImGui::DragFloat("Texture Scale (X)", &material.texture_scale.x, 0.01f, 0.01f, 10.0f);
+    ImGui::SameLine();
+    material_changed |= ImGui::DragFloat("Texture Scale(Y)", &material.texture_scale.y, 0.01f, 0.01f, 10.0f);
+    ImGui::PopItemWidth();
 
     ImGui::Spacing();
     if (material_changed) {
@@ -131,6 +136,8 @@ void EditorScene::LitMaterialComponent::update_material_from_json(const json& js
     material.specular_tint = m["specular_tint"];
     material.ambient_tint = m["ambient_tint"];
     material.shininess = m["shininess"];
+    //Task E
+    material.texture_scale = m["texture_scale"];
 }
 
 json EditorScene::LitMaterialComponent::material_into_json() const {
@@ -139,6 +146,7 @@ json EditorScene::LitMaterialComponent::material_into_json() const {
         {"specular_tint", material.specular_tint},
         {"ambient_tint", material.ambient_tint},
         {"shininess", material.shininess},
+        {"texture_scale", material.texture_scale},
     }};
 }
 
