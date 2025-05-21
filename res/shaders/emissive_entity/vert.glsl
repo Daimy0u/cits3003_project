@@ -11,14 +11,13 @@ out VertexOut {
 
 // Per instance data
 uniform mat4 model_matrix;
-uniform vec2 texture_scale;
 
 // Global data
 uniform mat4 projection_view_matrix;
 
 void main() {
     vertex_out.ws_position = (model_matrix * vec4(vertex_position, 1.0f)).xyz;
-    vertex_out.texture_coordinate = texture_coordinate * texture_scale;
+    vertex_out.texture_coordinate = texture_coordinate;
 
     gl_Position = projection_view_matrix * vec4(vertex_out.ws_position, 1.0f);
 }

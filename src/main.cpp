@@ -28,7 +28,6 @@ int main() {
     // error to the console
     OpenGL::load_functions();
     OpenGL::setup_debug_callback();
-
     // Scope is to ensure that MasterRenderer destructor runs before the OpenGL context is destroyed
     {
         // Initialise ImGui to be used

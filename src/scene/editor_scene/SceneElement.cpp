@@ -116,14 +116,11 @@ void EditorScene::LitMaterialComponent::add_material_imgui_edit_section(MasterRe
     // Set this to true if the user has changed any of the material values, otherwise the changes won't be propagated
     bool material_changed = false;
     ImGui::Text("Material");
-
-    // Add UI controls here
-    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.45f);
-    material_changed |= ImGui::DragFloat("Texture Scale (X)", &material.texture_scale.x, 0.01f, 0.01f, 10.0f);
-    ImGui::SameLine();
-    material_changed |= ImGui::DragFloat("Texture Scale(Y)", &material.texture_scale.y, 0.01f, 0.01f, 10.0f);
-    ImGui::PopItemWidth();
-
+    //TASK F
+    if (ImGui::DragFloat("Texture Scale", &material.texture_scale, 0.01f)) {
+        printf("➜ slider changed to %f\n", material.texture_scale);
+        update_instance_data();
+    }
     ImGui::Spacing();
     if (material_changed) {
         update_instance_data();
@@ -136,7 +133,6 @@ void EditorScene::LitMaterialComponent::update_material_from_json(const json& js
     material.specular_tint = m["specular_tint"];
     material.ambient_tint = m["ambient_tint"];
     material.shininess = m["shininess"];
-    //Task E
     material.texture_scale = m["texture_scale"];
 }
 

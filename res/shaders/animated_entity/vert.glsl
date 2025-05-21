@@ -10,28 +10,13 @@ layout(location = 3) in vec4 bone_weights;
 layout(location = 4) in uvec4 bone_indices;
 
 out VertexOut {
-    LightingResult lighting_result;
+    vec3 ws_position;
+    vec3 ws_normal;
+    vec3 ws_view_dir;
     vec2 texture_coordinate;
 } vertex_out;
-
 // Per instance data
 uniform mat4 model_matrix;
-
-// Material properties
-uniform vec3 diffuse_tint;
-uniform vec3 specular_tint;
-uniform vec3 ambient_tint;
-uniform float shininess;
-
-//Task E
-uniform vec2 texture_scale;
-
-// Light Data
-#if NUM_PL > 0
-layout (std140) uniform PointLightArray {
-    PointLightData point_lights[NUM_PL];
-};
-#endif
 
 // Animation Data
 uniform mat4 bone_transforms[BONE_TRANSFORMS];
@@ -40,7 +25,8 @@ uniform mat4 bone_transforms[BONE_TRANSFORMS];
 uniform vec3 ws_view_position;
 uniform mat4 projection_view_matrix;
 
-uniform sampler2D specular_map_texture;
+//Task F
+uniform float texture_scale;
 
 void main() {
     // Transform vertices
@@ -56,20 +42,15 @@ void main() {
     mat4 animation_matrix = model_matrix * bone_transform;
     mat3 normal_matrix = cofactor(animation_matrix);
 
-    vec3 ws_position = (animation_matrix * vec4(vertex_position, 1.0f)).xyz;
-    vec3 ws_normal = normalize(normal_matrix * normal);
+    vec3 ws_pos = (animation_matrix * vec4(vertex_position, 1.0f)).xyz;
+    vec3 ws_norm = normalize(normal_matrix * normal);
+
+    vec3 ws_vdir = normalize(ws_view_position - ws_pos);
+    
+    //Task F
     vertex_out.texture_coordinate = texture_coordinate * texture_scale;
-
-    gl_Position = projection_view_matrix * vec4(ws_position, 1.0f);
-
-    // Per vertex light calcs are below this point
-    vec3 ws_view_dir = normalize(ws_view_position - ws_position);
-    LightCalculatioData light_calculation_data = LightCalculatioData(ws_position, ws_view_dir, ws_normal);
-    Material material = Material(diffuse_tint, specular_tint, ambient_tint, shininess, texture_scale);
-
-    vertex_out.lighting_result = total_light_calculation(light_calculation_data, material
-        #if NUM_PL > 0
-        ,point_lights
-        #endif
-    );
+    vertex_out.ws_position = ws_pos;
+    vertex_out.ws_normal = ws_norm;
+    vertex_out.ws_view_dir = ws_vdir;
+    gl_Position = projection_view_matrix * vec4(ws_pos, 1.0f);
 }
