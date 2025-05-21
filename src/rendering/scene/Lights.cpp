@@ -5,6 +5,9 @@
 std::vector<PointLight> LightScene::get_nearest_point_lights(glm::vec3 target, size_t max_count, size_t min_count) const {
     return get_nearest_lights(point_lights, target, max_count, min_count);
 }
+std::vector<DirectionalLight> LightScene::get_nearest_directional_lights(glm::vec3 target, size_t max_count, size_t min_count) const {
+    return get_nearest_lights(directional_lights, target, max_count, min_count);
+}
 
 template<typename Light>
 std::vector<Light> LightScene::get_nearest_lights(const std::unordered_set<std::shared_ptr<Light>>& lights, glm::vec3 target, size_t max_count, size_t min_count) {

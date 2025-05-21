@@ -32,13 +32,36 @@ struct PointLight {
         alignas(16) glm::vec3 position;
         alignas(16) glm::vec3 colour;
     };
+    
+};
+struct DirectionalLight {
+    DirectionalLight() = default;
+    DirectionalLight(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& colour) :
+        position(position), direction(direction), colour(colour) {}
+
+    static DirectionalLight off() {
+        return {glm::vec3{}, glm::vec3{}, glm::vec3{}};
+    }
+    static std::shared_ptr<DirectionalLight> create(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& colour) {
+        return std::make_shared<DirectionalLight>(position, direction, colour);
+    }
+
+    glm::vec3 position;
+    glm::vec3 direction; 
+    glm::vec3 colour;
+
+    struct Data {
+        alignas(16) glm::vec3 position;
+        alignas(16) glm::vec3 direction;
+        alignas(16) glm::vec3 colour;
+    };
 };
 
 /// A collection of each light type, with helpers that allow for selecting a subset of
 /// those lights on a proximity basis, since processing an unbounded number of lights on the GPU is bad idea.
 struct LightScene {
     std::unordered_set<std::shared_ptr<PointLight>> point_lights;
-
+    std::unordered_set<std::shared_ptr<DirectionalLight>> directional_lights;
     /// Will return up to `max_count` nearest point lights to `target`.
     /// It returns less than `max_count` if there are not that many point lights,
     /// in which case it will end up returning all point lights.
@@ -54,10 +77,12 @@ struct LightScene {
     ///       as well as support incrementally getting the `k` nearest.
     ///
     std::vector<PointLight> get_nearest_point_lights(glm::vec3 target, size_t max_count, size_t min_count = 0) const;
+    std::vector<DirectionalLight> get_nearest_directional_lights(glm::vec3 target, size_t max_count, size_t min_count = 0) const;
 
 private:
     template<typename Light>
     static std::vector<Light> get_nearest_lights(const std::unordered_set<std::shared_ptr<Light>>& lights, glm::vec3 target, size_t max_count, size_t min_count = 0);
+
 };
 
 #endif //LIGHTS_H
